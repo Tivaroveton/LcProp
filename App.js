@@ -1,31 +1,33 @@
-import { createAppContainer } from "react-navigation";
-import { createStackNavigator } from "react-navigation-stack";
-import LoginScreen from "./src/screens/LoginScreen";
-import HomeScreen from "./src/screens/HomeScreen";
-import CreateAccountScreen from "./src/screens/CreateAccountScreen";
-import ListScreen from "./src/screens/ListScreen";
-import ProjectScreen from "./src/screens/ProjectScreen";
-import CameraScreen from "./src/screens/CameraScreen";
-import ImagePreviewScreen from "./src/screens/ImagePreviewScreen";
+import React, { useState } from "react";
+import { Text, View } from "react-native";
+import * as Font from "expo-font";
+import { AppLoading } from "expo";
+import { enableScreens } from "react-native-screens";
 
-//Delete testScreen Later todo
-// import testScreen from "./src/screens/testScreen";
+import PropertyNavigator from "./src/navigation/PropertyNavigator";
 
-const AppNavigator = createStackNavigator(
-  {
-    Home: HomeScreen,
-    Login: LoginScreen,
-    CreateAccount: CreateAccountScreen,
-    ListScreen: ListScreen,
-    ProjectScreen: ProjectScreen,
-    CameraScreen: CameraScreen,
-    ImagePreviewScreen: ImagePreviewScreen,
-    // testScreen: testScreen,
-  },
-  {
-    // initialRouteName: "ListScreen",
-    initialRouteName: "CameraScreen",
-  }
-);
+enableScreens();
 
-export default createAppContainer(AppNavigator);
+//โหลดฟ้อนต์ ยังไม่ได้ใช้
+// const fetchFonts = () => {
+//   return Font.loadAsync({
+//     "open-sans": require("./assets/fonts/OpenSans-Regular.ttf"),
+//     "open-sans-bold": require("./assets/fonts/OpenSans-Bold.ttf"),
+//   });
+// };
+function App() {
+  // const [fontLoaded, setFontLoaded] = useState(false);
+
+  // if (!fontLoaded) {
+  //   return (
+  //     <AppLoading
+  //       // startAsync={fetchFonts}
+  //       onFinish={() => setFontLoaded(true)}
+  //     />
+  //   );
+  // }
+
+  return <PropertyNavigator />;
+}
+
+export default App;

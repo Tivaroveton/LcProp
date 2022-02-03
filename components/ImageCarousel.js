@@ -7,55 +7,35 @@ import {
   Dimensions,
   ScrollView,
   Text,
-  TouchableOpacity,
 } from "react-native";
-
-// import ImageCarousel from "../../components/ImageCarousel";
 
 const deviceWidth = Dimensions.get("window").width;
 const FIXED_BAR_WIDTH = 280;
 const BAR_SPACE = 10;
 
-async function fetchPictures() {
-  let formData = new FormData();
-  let folderName = "LC-123";
-  formData.append("folderName", folderName);
+const images = [
+  "https://s-media-cache-ak0.pinimg.com/originals/ee/51/39/ee5139157407967591081ee04723259a.png",
+  "https://s-media-cache-ak0.pinimg.com/originals/40/4f/83/404f83e93175630e77bc29b3fe727cbe.jpg",
+  "https://s-media-cache-ak0.pinimg.com/originals/8d/1a/da/8d1adab145a2d606c85e339873b9bb0e.jpg",
+];
 
-  let data = { folderName: "LC-1234" };
-  console.log(formData);
-  return await fetch(
-    //todo : redirect to real server ip
-    "http://192.168.1.161/test_ReactNative_Connection/fetchPicture.php",
-    {
-      method: "POST",
-      body: formData,
-      header: {
-        "content-type": "multipart/form-data",
-      },
-    }
-  );
-}
-function ImagePreviewScreen(props) {
-  const photo = props.navigation.getParam("photo");
-
-  // if (photo) return;
-  console.log("Enter ImagePreview");
-  console.log(photo.capturedImage);
-  // console.log(images);
-  const images = photo.capturedImage;
-
-  let numItems = photo.lengthw;
+// ไม่ได้ใช้
+export default ImageCarousel = (props) => {
+  // const images = props.image;
+  let numItems = images.lengthw;
   let itemWidth = FIXED_BAR_WIDTH / numItems - (numItems - 1) * BAR_SPACE;
   let animVal = new Animated.Value(0);
 
+  console.log("props ");
+  console.log(props);
   let imageArray = [];
   let barArray = [];
-
   images.forEach((image, i) => {
+    console.log(image, i);
     const thisImage = (
       <Image
         key={`image${i}`}
-        source={{ uri: image.uri }}
+        source={{ uri: image }}
         style={{ width: deviceWidth }}
       />
     );
@@ -67,32 +47,36 @@ function ImagePreviewScreen(props) {
       extrapolate: "clamp",
     });
 
-    //*** Animation For Scrolling Bar ใช้โชว์จำนวนรูป/ ตำแหน่งรูป -> ใช้ไม่ได้ ติดบัค ***/
     const thisBar = (
-      <View key={`bar${i}`} style={[styles.track]}>
+      <View
+        key={`bar${i}`}
+        style={[
+          styles.track,
+          {
+            width: itemWidth,
+            marginLeft: i === 0 ? 0 : BAR_SPACE,
+          },
+        ]}
+      >
+        <Text style={{ fontSize: 20, color: "red" }}>231</Text>
         <Animated.View
           style={[
             styles.bar,
             {
               width: itemWidth,
-              transform: [
-                { translateX: scrollBarVal },
-                { translateY: scrollBarVal },
-              ],
+              transform: [{ translateX: scrollBarVal }],
             },
           ]}
         />
       </View>
-
-      // {/* </View> */}
     );
     barArray.push(thisBar);
   });
 
-  // fetchPictures();
-
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.container} flex={1}>
+      <Text style={{ fontSize: 20, color: "red" }}>231</Text>
+
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -105,11 +89,10 @@ function ImagePreviewScreen(props) {
       >
         {imageArray}
       </ScrollView>
-      //
-      {/* <View style={styles.barContainer}>{barArray}</View> */}
+      <View style={styles.barContainer}>{barArray}</View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -142,5 +125,3 @@ const styles = StyleSheet.create({
     top: 0,
   },
 });
-
-export default ImagePreviewScreen;

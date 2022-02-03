@@ -15,16 +15,17 @@ import { FontAwesome5 } from "@expo/vector-icons";
 
 import CalendarIcon from "../../components/CalendarIcon";
 
-function ProjectScreen(props) {
-  const project = props.navigation.getParam("itemData");
+function ProjectScreen({ navigation }) {
+  const project = navigation.getParam("itemData"); //ข้อมูลส่งจาก ListScreen
   const dataURL =
     "https://www.jobprocess.landmarkcon.net/api/jobapi/" + project.id;
 
-  const [projectData, setProjectData] = useState({});
+  const [projectData, setProjectData] = useState({}); // ชุดข้อมูลจาก api
   const [Shorteninspectiondate, setShortenInspectiondate] = useState("");
 
   useEffect(() => {
     function fetchMyAPI() {
+      //api จาก dataURL
       return fetch(dataURL)
         .then((response) => response.json())
         .then((json) => {
@@ -38,7 +39,7 @@ function ProjectScreen(props) {
             lng: json.lng,
           });
           setShortenInspectiondate(json.inspectiondate.split("-")[2]);
-          console.log(json);
+          // console.log(json);
         })
         .catch((error) => {
           console.error(error);
@@ -110,7 +111,7 @@ function ProjectScreen(props) {
           style={styles.button1}
           onPress={(props) => {
             navigation.navigate({
-              routeName: "CamerScreen",
+              routeName: "CameraScreen",
               params: {
                 id: props.id,
               },
@@ -122,6 +123,23 @@ function ProjectScreen(props) {
           </FontAwesome>
         </TouchableOpacity>
 
+        <TouchableOpacity
+          title="Gallery"
+          style={styles.button1}
+          onPress={(props) => {
+            navigation.navigate({
+              routeName: "ImagePreviewScreen",
+              params: {
+                id: props.id,
+              },
+            });
+          }}
+        >
+          <FontAwesome name="photo" style={styles.fontawesome}>
+            {"\u00A0"} Gallery
+          </FontAwesome>
+        </TouchableOpacity>
+
         <View
           style={{
             flexDirection: "row",
@@ -129,12 +147,7 @@ function ProjectScreen(props) {
             alignSelf: "center",
           }}
         >
-          <TouchableOpacity
-            style={styles.button2}
-            onPress={() => {
-              console.log("Camera");
-            }}
-          >
+          <TouchableOpacity style={styles.button2}>
             <FontAwesome name="newspaper-o" style={styles.fontawesome}>
               {"\u00A0"} Work Paper
             </FontAwesome>
@@ -157,7 +170,6 @@ function ProjectScreen(props) {
 }
 
 const styles = StyleSheet.create({
-  
   textInput: {
     height: 40,
     margin: 6,

@@ -16,18 +16,21 @@ import { Camera } from "expo-camera";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Feather } from "@expo/vector-icons";
 
-import ImageCarousel from "../../components/ImageCarousel";
-import ImagePreviewScreen from "./ImagePreviewScreen";
-import { Component } from "react";
+// import ImageCarousel from "../../components/ImageCarousel";
+// import ImagePreviewScreen from "./ImagePreviewScreen";
+// import { Component } from "react";
 import * as MediaLibrary from "expo-media-library";
 
-import { useIsFocused } from "@react-navigation/native";
 import { NavigationContainer } from "@react-navigation/native";
+import { useIsFocused } from "@react-navigation/native";
+// import { withNavigationFocus } from "react-navigation";
 
-import * as Permissions from "expo-permissions";
+// import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
 
-const CameraScreen = ({ navigation }) => {
+import { withNavigationFocus } from "react-navigation";
+
+function CameraScreen({ navigation }) {
   //  camera permissions
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [camera, setCamera] = useState(null);
@@ -46,7 +49,6 @@ const CameraScreen = ({ navigation }) => {
   const [type, setType] = useState(Camera.Constants.Type.back);
 
   const [modalVisible, setModalVisible] = useState(false);
-  // const isFocused = useIsFocused();
 
   // on screen  load, ask for permission to use the camera
   useEffect(() => {
@@ -137,8 +139,8 @@ const CameraScreen = ({ navigation }) => {
     // if (hasMediaLibraryPermission) {
     //   try {
     //     const asset = await MediaLibrary.createAssetAsync(photo.uri);
-    //     const album = "LandMark/Room1";
-    //     MediaLibrary.createAlbumAsync(album, asset, false)
+    //     const albumName = "LandMark/Room1";
+    //     MediaLibrary.createAlbumAsync(albumName, asset, false)
     //       .then(() => {
     //         console.log("File Saved Successfully!");
     //       })
@@ -186,8 +188,8 @@ const CameraScreen = ({ navigation }) => {
 
     console.log(formData);
     return await fetch(
-      "http://192.168.10.107/test_ReactNative_Connection/uploadRN.php",
-      // "http://192.168.1.161/test_ReactNative_Connection/uploadRN.php",
+      //todo : redirect to real server ip
+      "http://192.168.1.161/test_ReactNative_Connection/uploadRN.php",
       {
         method: "POST",
         body: formData,
@@ -200,6 +202,7 @@ const CameraScreen = ({ navigation }) => {
 
   const CameraPreview = ({ capturedImage }: any) => {
     const previewPic = capturedImage[capturedImage.length - 1];
+
     return (
       <View
         style={{
@@ -218,11 +221,6 @@ const CameraScreen = ({ navigation }) => {
       </View>
     );
   };
-
-  // export const CameraView = (props) => {
-  //   const isFocused = useIsFocused();
-  //   return <View>{isFocused && <RNCamera />}</View>;
-  // };
 
   if (hasCameraPermission === null) {
     return (
@@ -247,7 +245,6 @@ const CameraScreen = ({ navigation }) => {
         */}
           {/* <PictureModal photo={capturedImage} /> */}
 
-          {/* {isFocused && ( */}
           <Camera
             style={[
               styles.cameraPreview,
@@ -312,14 +309,87 @@ const CameraScreen = ({ navigation }) => {
               </TouchableOpacity>
             </View>
           </Camera>
-          {/* )} */}
         </NavigationContainer>
       </View>
     );
   }
-};
 
-export default CameraScreen;
+  const deviceWidth = Dimensions.get("window").width;
+  const FIXED_BAR_WIDTH = 280;
+  const BAR_SPACE = 10;
+
+  function ImagePreviewScreen(props) {
+    const photo = props.navigation.getParam("photo");
+    // if (photo) return;
+    console.log("Enter ImagePreview");
+    console.log(photo.capturedImage);
+    // console.log(images);
+    const images = photo.capturedImage;
+
+    let numItems = photo.lengthw;
+    let itemWidth = FIXED_BAR_WIDTH / numItems - (numItems - 1) * BAR_SPACE;
+    let animVal = new Animated.Value(0);
+
+    let imageArray = [];
+    let barArray = [];
+
+    images.forEach((image, i) => {
+      const thisImage = (
+        <Image
+          key={`image${i}`}
+          source={{ uri: image.uri }}
+          style={{ width: deviceWidth }}
+        />
+      );
+      imageArray.push(thisImage);
+      // const scrollBarVal = animVal.interpolate({
+      //   inputRange: [deviceWidth * (i - 1), deviceWidth * (i + 1)],
+      //   outputRange: [-itemWidth, itemWidth],
+      //   extrapolate: "clamp",
+      // });
+
+      // const thisBar = (
+      //   <View key={`bar${i}`} style={[styles.track]}>
+      //     <Animated.View
+      //       style={[
+      //         styles.bar,
+      //         {
+      //           width: itemWidth,
+      //           transform: [
+      //             { translateX: scrollBarVal },
+      //             { translateY: scrollBarVal },
+      //           ],
+      //         },
+      //       ]}
+      //     />
+      //   </View>
+
+      //   // {/* </View> */}
+      // );
+      // barArray.push(thisBar);
+    });
+
+    return (
+      <View style={{ flex: 1 }}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          scrollEventThrottle={10}
+          pagingEnabled
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { x: animVal } } }],
+            { useNativeDriver: false }
+          )}
+        >
+          {imageArray}
+        </ScrollView>
+        {/* <View style={styles.barContainer}>{barArray}</View> */}
+      </View>
+    );
+  }
+}
+
+export default withNavigationFocus(CameraScreen);
 
 const styles = StyleSheet.create({
   information: {

@@ -18,12 +18,13 @@ import ProjectScreen from "./ProjectScreen"; //Menu Screen of Project
 import CalendarIcon from "../../components/CalendarIcon";
 
 function ListScreen({ navigation }) {
-  const [search, setSearch] = useState("");
-  const [filteredDataSource, setFilteredDataSource] = useState("");
-  const [masterDataSource, setMasterDataSource] = useState("");
+  const [search, setSearch] = useState(""); //ช่อง search
+  const [masterDataSource, setMasterDataSource] = useState(""); //ข้อมูลทั้งหมดที่ fetch จาก api
+  const [filteredDataSource, setFilteredDataSource] = useState(""); //masterDataSource -> ตัดเหลือแค่ที่ search 
   const dataURL = "https://www.jobprocess.landmarkcon.net/api/jobapi";
 
   useEffect(() => {
+    //Fetch ผ่าน api ของ dataURL
     const fetchMyAPI = () => {
       return fetch(dataURL)
         .then((response) => response.json())
@@ -85,7 +86,7 @@ function ListScreen({ navigation }) {
             // routeName: "ProjectScreen",
             params: {
               itemData: {
-                id: props.id,
+                id: props.id, //ยังไม่ได้ fetch list จริงข้างล่าง (ใช้เป็นดัมมี่ในเครื่อง)
                 // jobcode: props.jobcode,
                 // projectname: props.projectname,
                 // lcduedate: props.lcduedate,
